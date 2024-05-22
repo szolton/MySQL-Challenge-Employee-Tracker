@@ -14,19 +14,19 @@ I began by researching, downloading all the tools (mySQL, Inquirer, node.js) and
 
 You can see in this screenshot the different departments and all the roles.
 
-![Data screenshot](/Main/assets/images/data%20screenshot.png)
+![Data screenshot](./assets/images/data%20screenshot.png)
 
 Here, you can see the different employees and how one would add a department successfully.
 
-![Data screenshot](/Main/assets/images/data%20screenshot%20-2.png)
+![Data screenshot](./assets/images/data%20screenshot%20-2.png)
 
 Here, you can see what would happen after a department is added, view employees, add and change the roles they have.
 
-![Data screenshot](/Main/assets/images/data%20screenshot%20-3.png)
+![Data screenshot](./assets/images/data%20screenshot%20-3.png)
 
 Here, you can see the bonus activity of deleting different departments, roles, and employees.
 
-![Data screenshot](/Main/assets/images/data%20screenshot%20-4.png)
+![Data screenshot](./assets/images/data%20screenshot%20-4.png)
 
 
 # In conclusion
