@@ -2,19 +2,28 @@
 INSERT INTO department
   (name)
 VALUES
-  ('Engineering'),
-  ('Sales'),
+  ('HR'),
   ('Marketing'),
-  ('Legal');
+  ('Creative'),
+  ('Sales'),
+  ('Engineering'),
+  ('Accounting'),
+  ('Security'),
+  ('Customer Service');
 
 -- Inserts roles of employee into role table
 INSERT INTO role
   (title, salary, department_id)
 VALUES
-  ('Software Engineer', 85000, 1),
-  ('Salesperson', 75000, 2),
-  ('Marketing', 125000, 3),
-  ('Lawyer', 200000, 4);
+  ('HR', 50000, 1),
+  ('Office Admin', 40000, 1),
+  ('Marketing Specialist', 45000, 2),
+  ('Graphic Designer', 200000, 3),
+  ('Lead Salesperson', 80000, 4),
+  ('Software Enginner', 90000, 5),
+  ('Accountant', 600000, 6),
+  ('Head of Security', 70000, 7)
+  ('Customer Service Representative', 45000, 8);
 
 -- Inserts employee information into employee table
 INSERT INTO employee
@@ -22,5 +31,5 @@ INSERT INTO employee
 VALUES
   ('Sarah', 'Rachel', 1, 4),
   ('Jake', 'Michael', 2, 3),
-  ('Luna', 'Elena', 3, 1),
-  ('Travis', 'Pete', 4, 5);
+  ('Luna', 'Elena', 4, 1),
+  ('Travis', 'Pete', 5, 5);
