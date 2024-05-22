@@ -1,16 +1,26 @@
-INSERT INTO movies (movie_name)
-VALUES ("Lion King"),
-       ("The Godfather"),
-       ("West Side Story"),
-       ("Parasite"),
-       ("The Wizard of Oz");
+-- Inserts names of departments into department table
+INSERT INTO department
+  (name)
+VALUES
+  ('Engineering'),
+  ('Sales'),
+  ('Marketing'),
+  ('Legal');
 
-INSERT INTO reviews (movie_id, review)
-VALUES (1, "Zazu is underrated. Give that hornbill a sequel!"),
-       (2, "I'm gonna make him an offer you can't refuse, watch this movie"),
-       (1, "Scar is the lion everyone loves to hate"),
-       (3, "Ten years of ballet and three years of tap to join a gang in this neighborhood"),
-       (5, "The tin man gave a metallic, hollow performance"),
-       (1, "Hakuna matata"),
-       (5, "Those flying monkeys are nightmare fuel!");
-       
+-- Inserts roles of employee into role table
+INSERT INTO role
+  (title, salary, department_id)
+VALUES
+  ('Software Engineer', 85000, 1),
+  ('Salesperson', 75000, 2),
+  ('Marketing', 125000, 3),
+  ('Lawyer', 200000, 4);
+
+-- Inserts employee information into employee table
+INSERT INTO employee
+  (first_name, last_name, role_id, manager_id)
+VALUES
+  ('Sarah', 'Rachel', 1, 4),
+  ('Jake', 'Michael', 2, 3),
+  ('Luna', 'Elena', 3, 1),
+  ('Travis', 'Pete', 4, 5);
