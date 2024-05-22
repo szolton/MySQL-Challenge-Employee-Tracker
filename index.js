@@ -29,12 +29,12 @@ var employee_tracker = function () {
             'Delete Department',
             'Delete Role',
             'Delete Employee',
-            'View Department Budget',
             'Exit'
         ]
     }]).then((answers) => {
         switch (answers.prompt) {
             case 'View All Department':
+
                 // View all departments
                 db.query(`SELECT * FROM department`, (err, result) => {
                     if (err) throw err;
@@ -43,7 +43,9 @@ var employee_tracker = function () {
                     employee_tracker();
                 });
                 break;
+
             case 'View All Roles':
+
                 // View all roles
                 db.query(`SELECT * FROM role`, (err, result) => {
                     if (err) throw err;
@@ -52,7 +54,9 @@ var employee_tracker = function () {
                     employee_tracker();
                 });
                 break;
+
             case 'View All Employees':
+
                 // View all employees
                 db.query(`SELECT * FROM employee`, (err, result) => {
                     if (err) throw err;
@@ -61,7 +65,9 @@ var employee_tracker = function () {
                     employee_tracker();
                 });
                 break;
+
             case 'Add A Department':
+
                 // Add a department
                 inquirer.prompt([
                     {
@@ -77,7 +83,9 @@ var employee_tracker = function () {
                     });
                 });
                 break;
+
             case 'Add A Role':
+
                 // Add a role
                 db.query(`SELECT * FROM department`, (err, departments) => {
                     if (err) throw err;
@@ -107,7 +115,10 @@ var employee_tracker = function () {
                     });
                 });
                 break;
+
                 case 'Add An Employee':
+
+                  // Add an Employee
                   db.query(`SELECT * FROM role`, (err, roles) => {
                       if (err) throw err;
                       db.query(`SELECT id, CONCAT(first_name, ' ', last_name) AS manager FROM employee`, (err, managers) => {
@@ -147,6 +158,7 @@ var employee_tracker = function () {
                   break;
               
             case 'Update An Employee Role':
+
                 // Update an employee's role
                 db.query(`SELECT * FROM employee`, (err, employees) => {
                     if (err) throw err;
@@ -175,7 +187,9 @@ var employee_tracker = function () {
                     });
                 });
                 break;
+
                 case 'Update Employee Manager':
+
                   // Update an employee's manager
                   db.query(`SELECT id, CONCAT(first_name, ' ', last_name) AS employee FROM employee`, (err, employees) => {
                       if (err) throw err;
@@ -206,6 +220,7 @@ var employee_tracker = function () {
                   break;
               
                 case 'View Employees By Manager':
+
                   // View employees by manager
                   db.query(`SELECT id, CONCAT(first_name, ' ', last_name) AS manager FROM employee`, (err, managers) => {
                       if (err) throw err;
@@ -239,6 +254,7 @@ var employee_tracker = function () {
                   break;
               
                 case 'View Employees By Department':
+
                   // View employees by department
                   db.query(`SELECT * FROM department`, (err, result) => {
                       if (err) throw err;
@@ -275,6 +291,7 @@ var employee_tracker = function () {
                   break;
               
             case 'Delete Department':
+
             // Delete a department
             db.query(`SELECT * FROM department`, (err, departments) => {
                 if (err) throw err;
@@ -286,6 +303,7 @@ var employee_tracker = function () {
                         choices: departments.map(department => ({ name: department.name, value: department.id }))
                     }
                 ]).then(({ departmentId }) => {
+
                     // Check if there are roles associated with the department
                     db.query(`SELECT * FROM role WHERE department_id = ?`, [departmentId], (err, roles) => {
                         if (err) throw err;
@@ -293,6 +311,7 @@ var employee_tracker = function () {
                             console.log('Cannot delete department. There are roles associated with this department. Delete the roles first.');
                             employee_tracker();
                         } else {
+
                             // Delete the department
                             db.query(`DELETE FROM department WHERE id = ?`, [departmentId], (err, result) => {
                                 if (err) throw err;
@@ -305,27 +324,42 @@ var employee_tracker = function () {
             });
             break;
         
-              case 'Delete Role':
-                  // Delete a role
-                  db.query(`SELECT * FROM role`, (err, roles) => {
-                      if (err) throw err;
-                      inquirer.prompt([
-                          {
-                              type: 'list',
-                              name: 'roleId',
-                              message: 'Select the role to delete:',
-                              choices: roles.map(role => ({ name: role.title, value: role.id }))
-                          }
-                      ]).then(({ roleId }) => {
-                          db.query(`DELETE FROM role WHERE id = ?`, [roleId], (err, result) => {
-                              if (err) throw err;
-                              console.log(`Deleted role with ID ${roleId} from the database.`);
-                              employee_tracker();
-                          });
-                      });
-                  });
-                  break;
+            case 'Delete Role':
+
+    // Delete a role
+    db.query(`SELECT * FROM role`, (err, roles) => {
+        if (err) throw err;
+        inquirer.prompt([
+            {
+                type: 'list',
+                name: 'roleId',
+                message: 'Select the role to delete:',
+                choices: roles.map(role => ({ name: role.title, value: role.id }))
+            }
+        ]).then(({ roleId }) => {
+
+            // Check if there are employees with this role
+            db.query(`SELECT * FROM employee WHERE role_id = ?`, [roleId], (err, employees) => {
+                if (err) throw err;
+                if (employees.length > 0) {
+                    console.log('Cannot delete this role because there are employees assigned to it.');
+                    employee_tracker();
+                } else {
+
+                    // Delete the role if no employees are assigned
+                    db.query(`DELETE FROM role WHERE id = ?`, [roleId], (err, result) => {
+                        if (err) throw err;
+                        console.log(`Deleted role with ID ${roleId} from the database.`);
+                        employee_tracker();
+                    });
+                }
+            });
+        });
+    });
+    break;
+
               case 'Delete Employee':
+                
                   // Delete an employee
                   db.query(`SELECT * FROM employee`, (err, employees) => {
                       if (err) throw err;
@@ -345,15 +379,7 @@ var employee_tracker = function () {
                       });
                   });
                   break;
-              case 'View Department Budget':
-                  // View the total utilized budget of a department
-                  db.query(`SELECT department_id, SUM(salary) AS budget FROM role GROUP BY department_id`, (err, budgets) => {
-                      if (err) throw err;
-                      console.log("Department Budgets: ");
-                      console.table(budgets);
-                      employee_tracker();
-                  });
-                  break;
+                
               case 'Exit':
                   console.log('Exiting application.');
                   db.end();
