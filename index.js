@@ -122,9 +122,10 @@ var employee_tracker = function () {
                     });
                 })
             });
+
         } else if (answers.prompt === 'Add An Employee') {
             // Calling the database to acquire the roles and managers
-            db.query(`SELECT * FROM role`, (err, result) => {
+            db.query(`SELECT * FROM employee, role`, (err, result) => {
                 if (err) throw err;
 
                 inquirer.prompt([
@@ -164,88 +165,61 @@ var employee_tracker = function () {
                         choices: () => {
                             var array = [];
                             for (var i = 0; i < result.length; i++) {
-                                array.push(result[i].title);
+                                array.push({ name: result[i].title, value: result[i].id });
                             }
                             return array;
                         }
                     }
                 ]).then((answers) => {
-                    // Comparing the result and storing it into the variable
-                    for (var i = 0; i < result.length; i++) {
-                        if (result[i].title === answers.role) {
-                            var role = result[i];
-                        }
-                    }
-
-                    db.query(`INSERT INTO employee (first_name, last_name, role_id) VALUES (?, ?, ?)`, [answers.firstName, answers.lastName, role.id], (err, result) => {
-                        if (err) throw err;
-                        console.log(`Added ${answers.firstName} ${answers.lastName} to the database.`)
-                        employee_tracker();
-                    });
+                    // Handle the selected role
+                    console.log('Selected role:', answers.role);
+                    // Uncomment this line if you need to add more prompts after role selection
+                    // employee_tracker();
                 });
             });
-        } else if (answers.prompt === 'Update An Employee Role') {
+          } else if (answers.prompt === 'Update An Employee Role') {
+
             // Calling the database to acquire the roles and managers
             db.query(`SELECT * FROM employee`, (err, result) => {
                 if (err) throw err;
-
+        
                 inquirer.prompt([
                     {
                         // Choose an Employee to Update
                         type: 'list',
-                        name: 'employee',
-                        message: 'Which employees role do you want to update?',
-                        choices: () => {
-                            var array = [];
-                            for (var i = 0; i < result.length; i++) {
-                                array.push(result[i].last_name);
-                            }
-                            var employeeArray = [...new Set(array)];
-                            return employeeArray;
-                        }
+                        name: 'employeeId',
+                        message: 'Which employee\'s role do you want to update?',
+                        choices: result.map(employee => ({
+                            name: `${employee.first_name} ${employee.last_name}`,
+                            value: employee.id
+                        }))
+                    },
+                    {
+                        // Updating the New Role
+                        type: 'list',
+                        name: 'roleId',
+                        message: 'What is their new role?',
+                        choices: result.map(employee => ({
+                            name: employee.title,
+                            value: employee.role_id
+                        }))
                     }
                 ]).then((answers) => {
-                    inquirer.prompt([
-                        {
-                            // Updating the New Role
-                            type: 'list',
-                            name: 'role',
-                            message: 'What is their new role?',
-                            choices: () => {
-                                var role
-                                var array = [];
-                                for (var i = 0; i < result.length; i++) {
-                                    array.push(result[i].title);
-                                }
-                                var newArray = [...new Set(array)];
-                                return newArray;
-                            }
-                        }
-                    ]).then((roleAnswer) => {
-                        // Comparing the result and storing it into the variable
-                        for (var i = 0; i < result.length; i++) {
-                            if (result[i].last_name === answers.employee) {
-                                var employee = result[i];
-                            }
-                        }
-
-                        for (var i = 0; i < result.length; i++) {
-                            if (result[i].title === roleAnswer.role) {
-                                var role = result[i];
-                            }
-                        }
-
-                        db.query(`UPDATE employee SET role_id = ? WHERE id = ?`, [role.id, employee.id], (err, result) => {
-                            if (err) throw err;
-                            console.log(`Updated ${answers.employee}'s role to ${role.title}.`)
-                            employee_tracker();
-                        });
+                  
+                    // Update the employee's role in the database
+                    db.query(`UPDATE employee SET role_id = ? WHERE id = ?`, [answers.roleId, answers.employeeId], (err, result) => {
+                        if (err) throw err;
+                        console.log(`Successfully updated the employee's role.`);
+                        
+                        // Display confirmation message
+                        console.log('Employee role updated successfully.');
+        
+                        // Return to the main menu
+                        employee_tracker();
                     });
                 });
             });
-        } else if (answers.prompt === 'Log Out') {
-            db.end();
-            console.log("Good-Bye!");
         }
-    })
+        
+    });
 };
